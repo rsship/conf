@@ -287,57 +287,28 @@
   (define-key compilation-mode-map (kbd "<return>") 'next-error)
   (define-key compilation-mode-map (kbd "C-c C-c") nil))
 
-;; (evil-define-motion my-evil-forward-word-begin (count &optional bigword)
-;;   :type exclusive
-;;   (let ((count (or count 1)))
-;;     (forward-word count)))
-;; (evil-define-motion my-evil-forward-word-end (count &optional bigword)
-;;   :type inclusive
-;;   (let ((count (or count 1)))
-;;     (right-char 1)
-;;     (forward-word count)
-;;     (left-char 1)))
-;; (evil-define-motion my-evil-backward-word-begin (count &optional bigword)
-;;   :type exclusive
-;;   (let ((count (or count 1)))
-;;     (backward-word count)))
-;; (evil-define-motion my-evil-backward-word-end (count &optional bigword)
-;;   :type inclusive
-;;   (let ((count (or count 1)))
-;;     (backward-to-word count)
-;;     (left-char 1)))
-
-;; (define-key evil-motion-state-map (kbd "w") 'my-evil-forward-word-begin)
-;; (define-key evil-motion-state-map (kbd "e") 'my-evil-forward-word-end)
-;; (define-key evil-motion-state-map (kbd "b") 'my-evil-backward-word-begin)
-;; (define-key evil-motion-state-map (kbd "ge") 'my-evil-backward-word-end)
-
 (defun open-line-below ()
   "Create a new line below the current line, keeping cursor position."
   (interactive)
   (save-excursion
     (end-of-line)
-    (newline-and-indent)))
+    (newline-and-indent)
+    ))
 
-(defun open-line-above ()
-  "Create a new line above the current line, keeping cursor position."
+(defun insert-newlines-around ()
   (interactive)
-  (save-excursion
-    (beginning-of-line)
-    (newline)
-    (forward-line -1)
-    (indent-according-to-mode)))
+  (let ((col (current-column)))
+    (beginning-of-line)            
+    (open-line 1)
+    (move-to-column col)
+    (forward-line 1) 
+    (end-of-line)    
+    (newline)        
+    (forward-line -1)      
+    (move-to-column col))) 
 
-(global-set-key (kbd "C-l") 'open-line-below)
-(global-set-key (kbd "C-S-l") 'open-line-above)
+(global-set-key (kbd "C-l") 'insert-newlines-around)
 
-(defun kill-line-and-insert ()
-  "Kill line and enter insert mode."
-  (interactive)
-  (kill-line)
-  (evil-insert-state))
-
-(evil-define-key 'normal 'global (kbd "C-k") #'kill-line-and-insert)
 
 (load-file custom-file)
 
