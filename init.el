@@ -18,7 +18,8 @@
 (setq lsp-headerline-breadcrumb-enable nil)
 (setq lsp-keymap-prefix "C-c l")
 
-(load "~/.emacs.d/gnu-elpa-keyring/gnu-elpa-keyring-update.el") 
+(load "~/.emacs.d/gnu-elpa-keyring/gnu-elpa-keyring-update.el")
+
 
 ;; Add MELPA and other repositories
 (setq package-archives
@@ -32,7 +33,7 @@
 
 
 
-;; Install use-package if it is not installed already
+;; Install use-package if ituis not installed already
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
@@ -43,11 +44,23 @@
 (setq use-package-always-ensure t)
 (setq evil-want-keybinding nil)
 
-;; Evil mode
-(use-package evil
-  :ensure t
-  :config
-  (evil-mode 1))
+
+
+(require 'evil)
+(evil-mode 1) 
+(define-key evil-normal-state-map "d" nil)
+(define-key evil-motion-state-map "d" nil)
+;; (setq evil-normal-state-map (make-sparse-keymap))
+;; (setq evil-motion-state-map (make-sparse-keymap))
+;; (evil-define-key 'normal 'global
+;;   "h" 'evil-backward-char
+;;   "j" 'evil-next-line
+;;   "k" 'evil-previous-line
+;;   "l" 'evil-forward-char
+;;   "D" 'evil-delete-line)  
+(evil-mode -1)
+(evil-mode 1)
+
 
 (use-package evil-collection
   :ensure t
@@ -125,6 +138,7 @@
 (evil-define-key 'normal 'global (kbd "C-e") #'end-of-line)
 (define-key evil-insert-state-map (kbd "C-e") 'end-of-line)
 (define-key evil-visual-state-map (kbd "C-e") 'end-of-line)
+(evil-define-key 'normal 'global (kbd "C-d") #'kill-whole-line)
 
 
 (define-key evil-normal-state-map  (kbd "C-x C-p") 'evil-window-up)
@@ -199,6 +213,7 @@
 (define-key evil-normal-state-map (kbd ":") 'ignore)
 (define-key evil-normal-state-map (kbd ":") 'ignore)
 (define-key evil-normal-state-map (kbd "ZZ") 'ignore)
+(define-key evil-normal-state-map "dd" 'ignore)
 
 (global-set-key (kbd "C-x c-c") 'ignore )
 (global-set-key (kbd "C-x C-b") 'ignore )
