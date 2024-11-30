@@ -4,6 +4,9 @@
 (menu-bar-mode 0)
 (scroll-bar-mode 0)
 (global-display-line-numbers-mode)
+
+(setq initial-scratch-message "")
+
 (setq evil-mode-line-format nil)
 (setq evil-move-beyond-eol t)                 
 (setq-default evil-move-cursor-back nil)              
@@ -19,6 +22,13 @@
 (setq lsp-keymap-prefix "C-c l")
 
 (load "~/.emacs.d/gnu-elpa-keyring/gnu-elpa-keyring-update.el")
+
+(add-to-list 'load-path "~/.emacs.d/emms")
+(require 'emms-setup)
+
+(emms-all)
+(setq emms-player-list '(emms-player-vlc)
+      emms-info-functions '(emms-info-native))
 
 
 ;; Add MELPA and other repositories
@@ -45,23 +55,23 @@
 (setq evil-want-keybinding nil)
 
 
-
 (require 'evil)
-(evil-mode 1) 
-(define-key evil-normal-state-map "d" nil)
-(define-key evil-motion-state-map "d" nil)
-;; (setq evil-normal-state-map (make-sparse-keymap))
-;; (setq evil-motion-state-map (make-sparse-keymap))
-;; (evil-define-key 'normal 'global
-;;   "h" 'evil-backward-char
-;;   "j" 'evil-next-line
-;;   "k" 'evil-previous-line
-;;   "l" 'evil-forward-char
-;;   "D" 'evil-delete-line)  
+(evil-mode 1)
+(define-key evil-normal-state-map "w" nil)
+(define-key evil-normal-state-map "u" nil)
+
+(define-key evil-motion-state-map "w" nil)
+(define-key evil-motion-state-map "u" nil)
+
+(evil-define-key 'normal 'global
+  "w" 'forward-word
+  "u" 'undo)
+(evil-define-key 'motion 'global
+  "w" 'forward-word
+  "u" 'undo)
+
 (evil-mode -1)
 (evil-mode 1)
-
-
 (use-package evil-collection
   :ensure t
   :config 
@@ -127,20 +137,58 @@
 
 (require 'evil)
 
-(defun my-escape ()
+(defun my/enhanced-keyboard-quit ()
   (interactive)
-  (evil-force-normal-state))
-
-(define-key evil-normal-state-map (kbd "zz") 'my-escape)
-(define-key evil-visual-state-map (kbd "zz") 'my-escape)
-(define-key evil-insert-state-map (kbd "zz") 'my-escape)
+  (when (and (boundp 'evil-mode) 
+             evil-mode
+             (not (minibufferp))) 
+    (evil-normal-state))
+  
+  (keyboard-quit))
+(global-set-key (kbd "C-g") #'my/enhanced-keyboard-quit)
+(with-eval-after-load 'evil
+  (define-key evil-insert-state-map (kbd "C-g") #'my/enhanced-keyboard-quit)
+  (define-key evil-visual-state-map (kbd "C-g") #'my/enhanced-keyboard-quit)
+  (define-key evil-replace-state-map (kbd "C-g") #'my/enhanced-keyboard-quit)
+  (define-key evil-operator-state-map (kbd "C-g") #'my/enhanced-keyboard-quit))
 
 (evil-define-key 'normal 'global (kbd "C-e") #'end-of-line)
 (define-key evil-insert-state-map (kbd "C-e") 'end-of-line)
 (define-key evil-visual-state-map (kbd "C-e") 'end-of-line)
+
+
+(evil-define-key 'normal 'global (kbd "C-f") #'forward-word)
+(define-key evil-insert-state-map (kbd "C-f") 'forward-word)
+(define-key evil-visual-state-map (kbd "C-f") 'forward-word)
+
+
+(evil-define-key 'normal 'global (kbd "C-b") #'backward-word)
+(define-key evil-insert-state-map (kbd "C-b") 'backward-word)
+(define-key evil-visual-state-map (kbd "C-b") 'backward-word)
+
+(evil-define-key 'normal 'global (kbd "C-k") #'kill-line)
+(define-key evil-insert-state-map (kbd "C-k") 'kill-line)
+(define-key evil-visual-state-map (kbd "C-k") 'kill-line)
+
+
+(evil-define-key 'normal 'global (kbd "C-p") #'previous-line)
+(define-key evil-insert-state-map (kbd "C-p") 'previous-line)
+(define-key evil-visual-state-map (kbd "C-p") 'previous-line)
+
+(evil-define-key 'normal 'global (kbd "C-n") #'next-line)
+(define-key evil-insert-state-map (kbd "C-n") 'next-line)
+(define-key evil-visual-state-map (kbd "C-n") 'next-line)
+
+
+(evil-define-key 'normal 'global (kbd "C-a") #'move-beginning-of-line)
+(define-key evil-insert-state-map (kbd "C-a") 'move-beginning-of-line)
+(define-key evil-visual-state-map (kbd "C-a") 'move-beginning-of-line)
+
+(evil-define-key 'normal 'global (kbd "C-e") #'move-end-of-line)
+(define-key evil-insert-state-map (kbd "C-e") 'move-end-of-line)
+(define-key evil-visual-state-map (kbd "C-e") 'move-end-of-line)
+
 (evil-define-key 'normal 'global (kbd "C-d") #'kill-whole-line)
-
-
 (define-key evil-normal-state-map  (kbd "C-x C-p") 'evil-window-up)
 (define-key evil-normal-state-map  (kbd "C-x C-n") 'evil-window-down)
 (define-key evil-normal-state-map  (kbd "C-x C-]") 'split-window-vertically)
@@ -166,6 +214,22 @@
                   display-buffer-below-selected)
                  (reusable-frames . visible))))
 
+
+(with-eval-after-load 'project-compile
+  (add-to-list 'display-buffer-alist
+               '("\\*compilation\\*"
+                 (display-buffer-reuse-window
+                  display-buffer-below-selected)
+                 (reusable-frames . visible))))
+
+
+(with-eval-after-load 'my/project-compile
+  (add-to-list 'display-buffer-alist
+               '("\\*compilation\\*"
+                 (display-buffer-reuse-window
+                  display-buffer-below-selected)
+                 (reusable-frames . visible))))
+
 (defun my/focus-on-compilation-buffer (buffer desc)
   "Focus on the compilation window BUFFER."
   (when (buffer-live-p buffer)
@@ -179,7 +243,7 @@
               (my/focus-on-compilation-buffer (process-buffer proc) nil))))
 ;;; dired mode
 (require 'dired)
-(setq-default dired-dwim-target t)
+(setq-default  dired-dwim-target t)
 (setq dired-listing-switches "-alh")
 
 ;;; Move Text
@@ -188,15 +252,17 @@
 (global-set-key (kbd "M-p") 'move-text-up)
 
 (global-set-key(kbd "C-x P p") 'affe-find)
-(global-set-key(kbd "C-x C-C") 'project-compile)
 (global-set-key(kbd "C-s") 'save-buffer)
 (global-set-key(kbd "C-x k") 'kill-buffer-and-window)
 (global-set-key(kbd "C-x C-x") 'execute-extended-command)
 (global-set-key(kbd "C-c C-c") 'compile)
 (global-set-key(kbd "C-1") 'scratch-buffer)
 
+(global-unset-key (kbd "C-x C-c"))
+
 (define-key evil-normal-state-map (kbd "C-c C-c") 'compile)
-(define-key evil-normal-state-map (kbd "C-x C-C") 'project-compile)
+(define-key evil-normal-state-map (kbd "C-x C-c") 'project-compile)
+(define-key evil-emacs-state-map (kbd "C-x C-c") 'project-compile)
 
 (defun toggle-maximize-buffer ()
   "Maximize buffer if it's not maximized, restore if it is."
@@ -213,7 +279,6 @@
 (define-key evil-normal-state-map (kbd ":") 'ignore)
 (define-key evil-normal-state-map (kbd ":") 'ignore)
 (define-key evil-normal-state-map (kbd "ZZ") 'ignore)
-(define-key evil-normal-state-map "dd" 'ignore)
 
 (global-set-key (kbd "C-x c-c") 'ignore )
 (global-set-key (kbd "C-x C-b") 'ignore )
@@ -221,9 +286,9 @@
 
 
 ;; TODO: yaml mode has funcky bug so temporaryly disabled yaml mode. instead of yaml mode i've activated sh-mode
-(add-to-list 'auto-mode-alist '("\\.yaml\\'" . sh-mode))
-(add-to-list 'auto-mode-alist '("\\.yml\\'" . sh-mode))
-(add-to-list 'auto-mode-alist '("\\.rs\\'" . rustic-mode))
+;; (add-to-list 'auto-mode-alist '("\\.yaml\\'" . sh-mode))
+;; (add-to-list 'auto-mode-alist '("\\.yml\\'" . sh-mode))
+;; (add-to-list 'auto-mode-alist '("\\.rs\\'" . rustic-mode))
 
 (setq-default inhibit-splash-screen t
               make-backup-files nil
@@ -250,12 +315,8 @@
 (setq-default display-line-numbers t)
 
 (when (eq system-type 'darwin)
-  (setq ns-command-modifier 'meta)
-  (setq ns-option-modifier 'command))
-
-(when (eq system-type 'darwin)
   (setq mac-command-modifier 'control)
-  (setq mac-control-modifier 'super))
+  (setq mac-control-modifier 'meta))
 
 (use-package evil
   :ensure t)
@@ -271,8 +332,8 @@
 
 (add-hook 'multiple-cursors-mode-enabled-hook 'my/mc-temporary-emacs-state)
 
-(global-set-key (kbd "C-n") 'mc/mark-next-like-this-symbol)
-(global-set-key (kbd "C-p") 'mc/mark-previous-like-this-symbol)
+(global-set-key (kbd "M-n") 'mc/mark-next-like-this-symbol)
+(global-set-key (kbd "M-p") 'mc/mark-previous-like-this-symbol)
 (global-set-key (kbd "C-c a") 'mc/mark-all-like-this)
 (global-set-key (kbd "C-c n") 'mc/mmlte--down)
 (global-set-key (kbd "C-c p") 'mc/mmlte--up)
@@ -324,6 +385,6 @@
 
 (global-set-key (kbd "C-l") 'insert-newlines-around)
 
-
+(load "~/.emacs.d/root.el")
 (load-file custom-file)
 

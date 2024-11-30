@@ -11,9 +11,9 @@
  '(evil-collection-unimpaired-mode-hook '(evil-collection-unimpaired-mode-set-explicitly))
  '(global-evil-collection-unimpaired-mode nil)
  '(package-selected-packages
-   '(company dap-mode evil-collection go-mode gruber-darker-theme magit
-             mermaid-mode move-text multiple-cursors orderless rustic
-             vertico with-editor yasnippet)))
+   '(company dap-mode emms evil-collection go-mode gruber-darker-theme
+             magit mermaid-mode move-text multiple-cursors orderless
+             rustic terraform-mode vertico with-editor yasnippet)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
