@@ -72,11 +72,12 @@
 
 (evil-mode -1)
 (evil-mode 1)
-(use-package evil-collection
-  :ensure t
-  :config 
-  (evil-collection-init 'dired))
 
+(use-package evil-collection
+  :after evil
+  :ensure t
+  :config
+  (evil-collection-init))
 
 
 (use-package dired
@@ -256,6 +257,12 @@
 (global-set-key(kbd "C-x k") 'kill-buffer-and-window)
 (global-set-key(kbd "C-x C-x") 'execute-extended-command)
 (global-set-key(kbd "C-c C-c") 'compile)
+
+(with-eval-after-load 'magit
+  (add-hook 'magit-status-mode-hook
+            (lambda ()
+              (local-set-key (kbd "C-c C-c") 'magit-commit))))
+
 (global-set-key(kbd "C-1") 'scratch-buffer)
 
 (global-unset-key (kbd "C-x C-c"))
@@ -279,6 +286,7 @@
 (define-key evil-normal-state-map (kbd ":") 'ignore)
 (define-key evil-normal-state-map (kbd ":") 'ignore)
 (define-key evil-normal-state-map (kbd "ZZ") 'ignore)
+(define-key evil-normal-state-map (kbd "dd") 'ignore)
 
 (global-set-key (kbd "C-x c-c") 'ignore )
 (global-set-key (kbd "C-x C-b") 'ignore )
@@ -295,7 +303,7 @@
               tab-width 4
               indent-tabs-mode nil
               compilation-scroll-output t)
-
+(setq create-lockfiles nil)
 
 
 (use-package vertico
@@ -384,6 +392,9 @@
     (move-to-column col))) 
 
 (global-set-key (kbd "C-l") 'insert-newlines-around)
+
+(setq magit-display-buffer-function 'magit-display-buffer-fullframe-status-v1)
+(setq magit-bury-buffer-function 'magit-restore-window-configuration)
 
 (load "~/.emacs.d/root.el")
 (load-file custom-file)

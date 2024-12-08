@@ -13,7 +13,8 @@
  '(package-selected-packages
    '(company dap-mode emms evil-collection go-mode gruber-darker-theme
              magit mermaid-mode move-text multiple-cursors orderless
-             rustic terraform-mode vertico with-editor yasnippet)))
+             rustic terraform-mode vertico with-editor yaml-mode
+             yasnippet)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
