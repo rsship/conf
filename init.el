@@ -6,7 +6,6 @@
 (global-display-line-numbers-mode)
 
 (setq initial-scratch-message "")
-
 (setq evil-mode-line-format nil)
 (setq evil-move-beyond-eol t)                 
 (setq-default evil-move-cursor-back nil)              
@@ -21,8 +20,8 @@
 (setq lsp-headerline-breadcrumb-enable nil)
 (setq lsp-keymap-prefix "C-c l")
 
-(load "~/.emacs.d/gnu-elpa-keyring/gnu-elpa-keyring-update.el")
 
+(load "~/.emacs.d/gnu-elpa-keyring/gnu-elpa-keyring-update.el")
 (add-to-list 'load-path "~/.emacs.d/emms")
 (require 'emms-setup)
 
@@ -39,16 +38,13 @@
 
 (setq custom-file "~/.emacs.d/custom.el")
 
-(package-initialize)
-
-
-
 ;; Install use-package if ituis not installed already
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
 
 (electric-pair-mode 1)
+(cua-selection-mode 1)
 
 (require 'use-package)
 (setq use-package-always-ensure t)
@@ -58,10 +54,14 @@
 (require 'evil)
 (evil-mode 1)
 (define-key evil-normal-state-map "w" nil)
-(define-key evil-normal-state-map "u" nil)
+(define-key evil-normal-state-map "w" nil)
+(define-key evil-normal-state-map "d" nil)
+(define-key evil-visual-state-map (kbd "DEL") 'delete-region)
+(define-key evil-visual-state-map (kbd "<backspace>") 'delete-region)
 
 (define-key evil-motion-state-map "w" nil)
 (define-key evil-motion-state-map "u" nil)
+(define-key evil-motion-state-map "d" nil)
 
 (evil-define-key 'normal 'global
   "w" 'forward-word
@@ -286,8 +286,6 @@
 (define-key evil-normal-state-map (kbd ":") 'ignore)
 (define-key evil-normal-state-map (kbd ":") 'ignore)
 (define-key evil-normal-state-map (kbd "ZZ") 'ignore)
-(define-key evil-normal-state-map (kbd "dd") 'ignore)
-
 (global-set-key (kbd "C-x c-c") 'ignore )
 (global-set-key (kbd "C-x C-b") 'ignore )
 (global-set-key (kbd "C-x <") 'ignore )
@@ -303,8 +301,8 @@
               tab-width 4
               indent-tabs-mode nil
               compilation-scroll-output t)
-(setq create-lockfiles nil)
 
+(setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 
 (use-package vertico
   :init
@@ -371,31 +369,23 @@
   (define-key compilation-mode-map (kbd "<return>") 'next-error)
   (define-key compilation-mode-map (kbd "C-c C-c") nil))
 
-(defun open-line-below ()
-  "Create a new line below the current line, keeping cursor position."
+
+
+(defun new-line-extender ()
   (interactive)
   (save-excursion
-    (end-of-line)
-    (newline-and-indent)
-    ))
+    (forward-line 1)
+    (if (looking-at-p "^\\s-*$")
+        (open-line 2)
+      (open-line 3)))
+  (forward-line 2)
+  (evil-insert-state))
 
-(defun insert-newlines-around ()
-  (interactive)
-  (let ((col (current-column)))
-    (beginning-of-line)            
-    (open-line 1)
-    (move-to-column col)
-    (forward-line 1) 
-    (end-of-line)    
-    (newline)        
-    (forward-line -1)      
-    (move-to-column col))) 
 
-(global-set-key (kbd "C-l") 'insert-newlines-around)
+(global-set-key (kbd "C-l") 'new-line-extender)
 
 (setq magit-display-buffer-function 'magit-display-buffer-fullframe-status-v1)
 (setq magit-bury-buffer-function 'magit-restore-window-configuration)
 
 (load "~/.emacs.d/root.el")
-(load-file custom-file)
-
+(load-file  custom-file)
