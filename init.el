@@ -1,10 +1,14 @@
+(setq evil-want-keybinding nil)
 (require 'package)
-(setq package-enable-at-startup nil)
+(use-package evil)
+(use-package move-text)
+
 (tool-bar-mode 0)
 (menu-bar-mode 0)
 (scroll-bar-mode 0)
 (global-display-line-numbers-mode)
 
+(setq package-enable-at-startup nil)
 (setq initial-scratch-message "")
 (setq evil-mode-line-format nil)
 (setq evil-move-beyond-eol t)                 
@@ -21,14 +25,11 @@
 (setq lsp-keymap-prefix "C-c l")
 
 
-(load "~/.emacs.d/gnu-elpa-keyring/gnu-elpa-keyring-update.el")
 (add-to-list 'load-path "~/.emacs.d/emms")
 (require 'emms-setup)
-
 (emms-all)
 (setq emms-player-list '(emms-player-vlc)
       emms-info-functions '(emms-info-native))
-
 
 ;; Add MELPA and other repositories
 (setq package-archives
@@ -49,7 +50,6 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 (setq evil-want-keybinding nil)
-
 
 (require 'evil)
 (evil-mode 1)
@@ -105,8 +105,8 @@
   (add-hook 'after-init-hook 'global-company-mode)
   :config
   (setq company-idle-delay 0.2)
-  (setq company-minimum-prefix-length 1)
-  (setq company-tooltip-align-annotations t))
+  (setq company-minimum-prefix-length 1) (setq
+  company-tooltip-align-annotations t))
 
 ;; Yasnippet (snippet support)
 (use-package yasnippet
@@ -157,7 +157,6 @@
 (define-key evil-insert-state-map (kbd "C-e") 'end-of-line)
 (define-key evil-visual-state-map (kbd "C-e") 'end-of-line)
 
-
 (evil-define-key 'normal 'global (kbd "C-f") #'forward-word)
 (define-key evil-insert-state-map (kbd "C-f") 'forward-word)
 (define-key evil-visual-state-map (kbd "C-f") 'forward-word)
@@ -193,6 +192,10 @@
 (define-key evil-normal-state-map  (kbd "C-x C-p") 'evil-window-up)
 (define-key evil-normal-state-map  (kbd "C-x C-n") 'evil-window-down)
 (define-key evil-normal-state-map  (kbd "C-x C-]") 'split-window-vertically)
+
+(evil-define-key 'normal 'global (kbd "C-v") 'rectangle-mark-mode)
+(define-key evil-insert-state-map (kbd "C-v") 'rectangle-mark-mode)
+(define-key evil-visual-state-map (kbd "C-v") 'rectangle-mark-mode)
 
 ;;; custom elisp functions
 ;;; comment in/out
@@ -281,7 +284,6 @@
       (delete-other-windows))))
 
 (global-set-key (kbd "C-x 0") 'toggle-maximize-buffer)
-
 
 (define-key evil-normal-state-map (kbd ":") 'ignore)
 (define-key evil-normal-state-map (kbd ":") 'ignore)
@@ -388,4 +390,5 @@
 (setq magit-bury-buffer-function 'magit-restore-window-configuration)
 
 (load "~/.emacs.d/root.el")
+(load "~/.emacs.d/gnu-elpa-keyring/gnu-elpa-keyring-update.el")
 (load-file  custom-file)
