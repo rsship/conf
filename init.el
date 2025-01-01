@@ -2,13 +2,11 @@
 (require 'package)
 (use-package evil)
 (use-package move-text)
-
+(setq split-width-threshold nil)
 (tool-bar-mode 0)
 (menu-bar-mode 0)
 (scroll-bar-mode 0)
 (global-display-line-numbers-mode)
-
-(setq package-enable-at-startup nil)
 (setq initial-scratch-message "")
 (setq evil-mode-line-format nil)
 (setq evil-move-beyond-eol t)                 
@@ -22,24 +20,22 @@
 (setq sp-enable-symbol-highlighting nil)
 (setq sp-headerline-breadcrumb-enable nil) 
 (setq lsp-headerline-breadcrumb-enable nil)
-(setq lsp-keymap-prefix "C-c l")
 
+(setq-default inhibit-splash-screen t
+              make-backup-files nil
+              tab-width 4
+              indent-tabs-mode nil
+              compilation-scroll-output t)
 
-(add-to-list 'load-path "~/.emacs.d/emms")
-(require 'emms-setup)
-(emms-all)
-(setq emms-player-list '(emms-player-vlc)
-      emms-info-functions '(emms-info-native))
+(setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 
-;; Add MELPA and other repositories
 (setq package-archives
       '(("melpa" . "https://melpa.org/packages/")
-        ("org" . "https://orgmode.org/elpa/")
+        ("org " . "https://orgmode.org/elpa/")
         ("gnu" . "https://elpa.gnu.org/packages/")))
 
 (setq custom-file "~/.emacs.d/custom.el")
 
-;; Install use-package if ituis not installed already
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
@@ -55,7 +51,8 @@
 (evil-mode 1)
 (define-key evil-normal-state-map "w" nil)
 (define-key evil-normal-state-map "w" nil)
-(define-key evil-normal-state-map "d" nil)
+(
+define-key evil-normal-state-map "d" nil)
 (define-key evil-visual-state-map (kbd "DEL") 'delete-region)
 (define-key evil-visual-state-map (kbd "<backspace>") 'delete-region)
 
@@ -99,7 +96,6 @@
   (advice-add 'dired-do-delete :after #'my/dired-refresh-after-operation)
   (advice-add 'dired-create-directory :after #'my/dired-refresh-after-operation))
 
-;; Company mode (autocomplete)
 (use-package company
   :init
   (add-hook 'after-init-hook 'global-company-mode)
@@ -108,12 +104,10 @@
   (setq company-minimum-prefix-length 1) (setq
   company-tooltip-align-annotations t))
 
-;; Yasnippet (snippet support)
 (use-package yasnippet
   :init
   (yas-global-mode 1))
 
-;; Integrating yasnippet with company-mode
 (use-package company
   :config
   (defun company-backend-with-yas (backend)
@@ -123,8 +117,6 @@
       (append (if (consp backend) backend (list backend))
               '(:with company-yasnippet))))
   (setq company-backends (mapcar #'company-backend-with-yas company-backends)))
-
-
 
 (setq evil-insert-state-cursor '(box "yellow")
       evil-normal-state-cursor '(box "yellow")
@@ -197,8 +189,6 @@
 (define-key evil-insert-state-map (kbd "C-v") 'rectangle-mark-mode)
 (define-key evil-visual-state-map (kbd "C-v") 'rectangle-mark-mode)
 
-;;; custom elisp functions
-;;; comment in/out
 
 (defun toggle-comment-region ()
   "Toggle comment on region if active, otherwise on cunrent line."
@@ -211,49 +201,10 @@
 
 (global-set-key (kbd "C-x C-/") 'toggle-comment-region)
 
-(with-eval-after-load 'compile
-  (add-to-list 'display-buffer-alist
-               '("\\*compilation\\*"
-                 (display-buffer-reuse-window
-                  display-buffer-below-selected)
-                 (reusable-frames . visible))))
-
-
-(with-eval-after-load 'project-compile
-  (add-to-list 'display-buffer-alist
-               '("\\*compilation\\*"
-                 (display-buffer-reuse-window
-                  display-buffer-below-selected)
-                 (reusable-frames . visible))))
-
-
-(with-eval-after-load 'my/project-compile
-  (add-to-list 'display-buffer-alist
-               '("\\*compilation\\*"
-                 (display-buffer-reuse-window
-                  display-buffer-below-selected)
-                 (reusable-frames . visible))))
-
-(defun my/focus-on-compilation-buffer (buffer desc)
-  "Focus on the compilation window BUFFER."
-  (when (buffer-live-p buffer)
-    (let ((window (get-buffer-window buffer)))
-      (when window
-        (select-window window)))))
-
-(add-hook 'compilation-start-hook
-          (lambda (proc)
-            (when (eq (process-status proc) 'run)
-              (my/focus-on-compilation-buffer (process-buffer proc) nil))))
-;;; dired mode
-(require 'dired)
-(setq-default  dired-dwim-target t)
-(setq dired-listing-switches "-alh")
-
-;;; Move Text
-(require 'move-text)
-(global-set-key (kbd "M-n") 'move-text-down)
-(global-set-key (kbd "M-p") 'move-text-up)
+;; ;;; Move Text
+;; (require 'move-text)
+;; (global-set-key (kbd "M-n") 'move-text-down)
+;; (global-set-key (kbd "M-p") 'move-text-up)
 
 (global-set-key(kbd "C-x P p") 'affe-find)
 (global-set-key(kbd "C-s") 'save-buffer)
@@ -284,7 +235,6 @@
       (delete-other-windows))))
 
 (global-set-key (kbd "C-x 0") 'toggle-maximize-buffer)
-
 (define-key evil-normal-state-map (kbd ":") 'ignore)
 (define-key evil-normal-state-map (kbd ":") 'ignore)
 (define-key evil-normal-state-map (kbd "ZZ") 'ignore)
@@ -292,31 +242,10 @@
 (global-set-key (kbd "C-x C-b") 'ignore )
 (global-set-key (kbd "C-x <") 'ignore )
 
-
-;; TODO: yaml mode has funcky bug so temporaryly disabled yaml mode. instead of yaml mode i've activated sh-mode
-;; (add-to-list 'auto-mode-alist '("\\.yaml\\'" . sh-mode))
-;; (add-to-list 'auto-mode-alist '("\\.yml\\'" . sh-mode))
-;; (add-to-list 'auto-mode-alist '("\\.rs\\'" . rustic-mode))
-
-(setq-default inhibit-splash-screen t
-              make-backup-files nil
-              tab-width 4
-              indent-tabs-mode nil
-              compilation-scroll-output t)
-
-(setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
-
 (use-package vertico
   :init
   (vertico-mode)
   (vertico-flat-mode))
-
-(use-package orderless
-  :custom
-  (completion-styles '(orderless basic)) 
-  (completion-category-defaults nil) 
-  (completion-category-overrides '((file (styles partial-completion))))) 
-
 
 (set-frame-font "Iosevka 17" nil t)
 (setq display-line-numbers-type 'relative)
@@ -352,7 +281,6 @@
   (kbd "C-n") 'mc/mark-next-like-this
   (kbd "C-p") 'mc/mark-previous-like-this)
 
-;; Make sure multiple-cursors works in visual mode
 (defun my/mc-mark-next-like-this ()
   (interactive)
   (when (region-active-p)
@@ -368,27 +296,33 @@
 (global-unset-key (kbd "M-w"))
 
 (with-eval-after-load 'compile
-  (define-key compilation-mode-map (kbd "<return>") 'next-error)
   (define-key compilation-mode-map (kbd "C-c C-c") nil))
 
-
-
-(defun new-line-extender ()
-  (interactive)
-  (save-excursion
-    (forward-line 1)
-    (if (looking-at-p "^\\s-*$")
-        (open-line 2)
-      (open-line 3)))
-  (forward-line 2)
-  (evil-insert-state))
-
-
-(global-set-key (kbd "C-l") 'new-line-extender)
 
 (setq magit-display-buffer-function 'magit-display-buffer-fullframe-status-v1)
 (setq magit-bury-buffer-function 'magit-restore-window-configuration)
 
 (load "~/.emacs.d/root.el")
 (load "~/.emacs.d/gnu-elpa-keyring/gnu-elpa-keyring-update.el")
+
+(defun rc/turn-on-paredit ()
+  (interactive)
+  (paredit-mode 1))
+
+(add-hook 'emacs-lisp-mode-hook  'rc/turn-on-paredit)
+(add-hook 'clojure-mode-hook     'rc/turn-on-paredit)
+(add-hook 'lisp-mode-hook        'rc/turn-on-paredit)
+(add-hook 'common-lisp-mode-hook 'rc/turn-on-paredit)
+(add-hook 'scheme-mode-hook      'rc/turn-on-paredit)
+(add-hook 'racket-mode-hook      'rc/turn-on-paredit)
+(setq tramp-auto-save-directory "/tmp")
+
+(require 'compile)
+compilation-error-regexp-alist-alist
+
+(add-to-list 'compilation-error-regexp-alist
+             '("\\([a-zA-Z0-9\\.]+\\)(\\([0-9]+\\)\\(,\\([0-9]+\\)\\)?) \\(Warning:\\)?"
+               1 2 (4) (5)))
+
+(load-theme 'gruber-darker t)
 (load-file  custom-file)
