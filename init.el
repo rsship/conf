@@ -9,6 +9,15 @@
 (global-display-line-numbers-mode)
 (setq initial-scratch-message "")
 (setq evil-mode-line-format nil)
+(setq evil-insert-state-message nil)
+(setq evil-visual-state-message nil)
+(setq evil-normal-state-message nil)
+(setq evil-motion-state-message nil)
+(setq evil-emacs-state-message nil)
+(setq evil-operator-state-message nil)
+(setq evil-replace-state-message nil)
+(setq evil-echo-state nil)  
+(setq evil-show-mode-line nil) 
 (setq evil-move-beyond-eol t)                 
 (setq-default evil-move-cursor-back nil)              
 (setq-default blink-cursor-mode nil)
@@ -189,6 +198,11 @@ define-key evil-normal-state-map "d" nil)
 (define-key evil-insert-state-map (kbd "C-v") 'rectangle-mark-mode)
 (define-key evil-visual-state-map (kbd "C-v") 'rectangle-mark-mode)
 
+(evil-define-key 'normal 'global (kbd "C-c C-c") 'compile)
+(define-key evil-insert-state-map (kbd "C-c C-c") 'compile)
+(define-key evil-visual-state-map (kbd "C-c C-c") 'compile)
+
+
 
 (defun toggle-comment-region ()
   "Toggle comment on region if active, otherwise on cunrent line."
@@ -210,7 +224,6 @@ define-key evil-normal-state-map "d" nil)
 (global-set-key(kbd "C-s") 'save-buffer)
 (global-set-key(kbd "C-x k") 'kill-buffer-and-window)
 (global-set-key(kbd "C-x C-x") 'execute-extended-command)
-(global-set-key(kbd "C-c C-c") 'compile)
 
 (with-eval-after-load 'magit
   (add-hook 'magit-status-mode-hook
@@ -305,24 +318,20 @@ define-key evil-normal-state-map "d" nil)
 (load "~/.emacs.d/root.el")
 (load "~/.emacs.d/gnu-elpa-keyring/gnu-elpa-keyring-update.el")
 
-(defun rc/turn-on-paredit ()
-  (interactive)
-  (paredit-mode 1))
-
-(add-hook 'emacs-lisp-mode-hook  'rc/turn-on-paredit)
-(add-hook 'clojure-mode-hook     'rc/turn-on-paredit)
-(add-hook 'lisp-mode-hook        'rc/turn-on-paredit)
-(add-hook 'common-lisp-mode-hook 'rc/turn-on-paredit)
-(add-hook 'scheme-mode-hook      'rc/turn-on-paredit)
-(add-hook 'racket-mode-hook      'rc/turn-on-paredit)
-(setq tramp-auto-save-directory "/tmp")
-
 (require 'compile)
 compilation-error-regexp-alist-alist
 
 (add-to-list 'compilation-error-regexp-alist
              '("\\([a-zA-Z0-9\\.]+\\)(\\([0-9]+\\)\\(,\\([0-9]+\\)\\)?) \\(Warning:\\)?"
                1 2 (4) (5)))
+(defun newline-above ()
+  (interactive)
+  (let ((col (current-column)))
+    (beginning-of-line)
+    (open-line 1)
+    (move-to-column col)))
+
+(global-set-key (kbd "C-S-o") 'newline-above) 
 
 (load-theme 'gruber-darker t)
 (load-file  custom-file)
