@@ -1,4 +1,5 @@
 (setq evil-want-keybinding nil)
+(setq evil-disable-insert-state-bindings t)
 (require 'package)
 (use-package evil)
 (use-package move-text)
@@ -29,6 +30,8 @@
 (setq sp-enable-symbol-highlighting nil)
 (setq sp-headerline-breadcrumb-enable nil) 
 (setq lsp-headerline-breadcrumb-enable nil)
+(setq ring-bell-function 'ignore)
+(setq-default comment-style 'plain)
 
 (setq-default inhibit-splash-screen t
               make-backup-files nil
@@ -113,6 +116,12 @@ define-key evil-normal-state-map "d" nil)
   (setq company-minimum-prefix-length 1) (setq
   company-tooltip-align-annotations t))
 
+(use-package orderless
+  :ensure t
+  :custom
+  (completion-styles '(orderless basic))
+  (completion--category-override '((file (styles basic partial-completions)))))
+
 (use-package yasnippet
   :init
   (yas-global-mode 1))
@@ -156,37 +165,44 @@ define-key evil-normal-state-map "d" nil)
 
 (evil-define-key 'normal 'global (kbd "C-e") #'end-of-line)
 (define-key evil-insert-state-map (kbd "C-e") 'end-of-line)
+(define-key evil-emacs-state-map (kbd "C-e") 'end-of-line)
 (define-key evil-visual-state-map (kbd "C-e") 'end-of-line)
 
 (evil-define-key 'normal 'global (kbd "C-f") #'forward-word)
 (define-key evil-insert-state-map (kbd "C-f") 'forward-word)
+(define-key evil-emacs-state-map (kbd "C-f") 'forward-word)
 (define-key evil-visual-state-map (kbd "C-f") 'forward-word)
 
 
 (evil-define-key 'normal 'global (kbd "C-b") #'backward-word)
 (define-key evil-insert-state-map (kbd "C-b") 'backward-word)
+(define-key evil-emacs-state-map (kbd "C-b") 'backward-word)
 (define-key evil-visual-state-map (kbd "C-b") 'backward-word)
 
 (evil-define-key 'normal 'global (kbd "C-k") #'kill-line)
 (define-key evil-insert-state-map (kbd "C-k") 'kill-line)
+(define-key evil-emacs-state-map (kbd "C-k") 'kill-line)
 (define-key evil-visual-state-map (kbd "C-k") 'kill-line)
 
 
 (evil-define-key 'normal 'global (kbd "C-p") #'previous-line)
 (define-key evil-insert-state-map (kbd "C-p") 'previous-line)
+(define-key evil-emacs-state-map (kbd "C-p") 'previous-line)
 (define-key evil-visual-state-map (kbd "C-p") 'previous-line)
 
 (evil-define-key 'normal 'global (kbd "C-n") #'next-line)
 (define-key evil-insert-state-map (kbd "C-n") 'next-line)
+(define-key evil-emacs-state-map (kbd "C-n") 'next-line)
 (define-key evil-visual-state-map (kbd "C-n") 'next-line)
-
 
 (evil-define-key 'normal 'global (kbd "C-a") #'move-beginning-of-line)
 (define-key evil-insert-state-map (kbd "C-a") 'move-beginning-of-line)
+(define-key evil-emacs-state-map (kbd "C-a") 'move-beginning-of-line)
 (define-key evil-visual-state-map (kbd "C-a") 'move-beginning-of-line)
 
 (evil-define-key 'normal 'global (kbd "C-e") #'move-end-of-line)
 (define-key evil-insert-state-map (kbd "C-e") 'move-end-of-line)
+(define-key evil-emacs-state-map (kbd "C-e") 'move-end-of-line)
 (define-key evil-visual-state-map (kbd "C-e") 'move-end-of-line)
 
 (evil-define-key 'normal 'global (kbd "C-d") #'kill-whole-line)
@@ -194,15 +210,45 @@ define-key evil-normal-state-map "d" nil)
 (define-key evil-normal-state-map  (kbd "C-x C-n") 'evil-window-down)
 (define-key evil-normal-state-map  (kbd "C-x C-]") 'split-window-vertically)
 
-(evil-define-key 'normal 'global (kbd "C-v") 'rectangle-mark-mode)
-(define-key evil-insert-state-map (kbd "C-v") 'rectangle-mark-mode)
-(define-key evil-visual-state-map (kbd "C-v") 'rectangle-mark-mode)
+(evil-define-key 'normal 'global (kbd "C-v") 'set-mark-command)
+(define-key evil-insert-state-map (kbd "C-v") 'set-mark-command)
+(define-key evil-emacs-state-map (kbd "C-v") 'set-mark-command)
+(define-key evil-visual-state-map (kbd "C-v") 'set-mark-command)
 
 (evil-define-key 'normal 'global (kbd "C-c C-c") 'compile)
 (define-key evil-insert-state-map (kbd "C-c C-c") 'compile)
+(define-key evil-emacs-state-map (kbd "C-c C-c") 'compile)
 (define-key evil-visual-state-map (kbd "C-c C-c") 'compile)
 
+(evil-define-key 'normal 'global (kbd "C-l") 'forward-char)
+(define-key evil-insert-state-map (kbd "C-l") 'forward-char)
+(define-key evil-emacs-state-map (kbd "C-l") 'forward-char)
+(define-key evil-visual-state-map (kbd "C-l") 'forward-char)
 
+(evil-define-key 'normal 'global (kbd "C-h") 'backward-char)
+(define-key evil-insert-state-map (kbd "C-h") 'backward-char)
+(define-key evil-emacs-state-map (kbd "C-h") 'backward-char)
+(define-key evil-visual-state-map (kbd "C-h") 'backward-char)
+
+(evil-define-key 'normal 'global (kbd "M-.") 'xref-find-defintions)
+(define-key evil-insert-state-map (kbd "M-.") 'xref-find-defintions)
+(define-key evil-emacs-state-map (kbd "M-.") 'xref-find-defintions)
+(define-key evil-visual-state-map (kbd "M-.") 'xref-find-defintions)
+
+(evil-define-key 'normal 'global (kbd "M-,") 'xref-go-back)
+(define-key evil-insert-state-map (kbd "M-,") 'xref-go-back)
+(define-key evil-emacs-state-map (kbd "M-,") 'xref-go-back)
+(define-key evil-visual-state-map (kbd "M-,") 'xref-go-back)
+
+(evil-define-key 'normal 'global (kbd "M-*") 'xref-go-forward)
+(define-key evil-insert-state-map (kbd "M-*") 'xref-go-forward)
+(define-key evil-emacs-state-map (kbd "M-*") 'xref-go-forward)
+(define-key evil-visual-state-map (kbd "M-*") 'xref-go-forward)
+
+(evil-define-key 'normal 'global (kbd "RET") 'newline)
+(define-key evil-insert-state-map (kbd "RET") 'newline)
+(define-key evil-emacs-state-map (kbd "RET") 'newline)
+(define-key evil-visual-state-map (kbd "RET") 'newline)
 
 (defun toggle-comment-region ()
   "Toggle comment on region if active, otherwise on cunrent line."
@@ -304,9 +350,7 @@ define-key evil-normal-state-map "d" nil)
   (when (region-active-p)
     (mc/mark-previous-like-this-symbol 1)))
 
-(global-set-key (kbd "C-q") 'kill-ring-save)
 (global-set-key (kbd "C-x C-q") 'wdired-change-to-wdired-mode)
-(global-unset-key (kbd "M-w"))
 
 (with-eval-after-load 'compile
   (define-key compilation-mode-map (kbd "C-c C-c") nil))
@@ -324,6 +368,7 @@ compilation-error-regexp-alist-alist
 (add-to-list 'compilation-error-regexp-alist
              '("\\([a-zA-Z0-9\\.]+\\)(\\([0-9]+\\)\\(,\\([0-9]+\\)\\)?) \\(Warning:\\)?"
                1 2 (4) (5)))
+
 (defun newline-above ()
   (interactive)
   (let ((col (current-column)))
@@ -331,7 +376,10 @@ compilation-error-regexp-alist-alist
     (open-line 1)
     (move-to-column col)))
 
-(global-set-key (kbd "C-S-o") 'newline-above) 
+(global-set-key (kbd "C-S-o") 'newline-above)
+(add-hook 'c-mode-hook
+          (lambda ()
+            (setq comment-style 'plain)))
 
 (load-theme 'gruber-darker t)
 (load-file  custom-file)
