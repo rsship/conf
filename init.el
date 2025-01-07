@@ -1,6 +1,5 @@
 (setq evil-want-keybinding nil)
 (setq evil-disable-insert-state-bindings t)
-(require 'package)
 (use-package evil)
 (use-package move-text)
 (setq split-width-threshold nil)
@@ -33,6 +32,13 @@
 (setq ring-bell-function 'ignore)
 (setq-default comment-style 'plain)
 
+(load "~/.emacs.d/root.el")
+(load "~/.emacs.d/gnu-elpa-keyring/gnu-elpa-keyring-update.el")
+
+(when (eq system-type 'darwin)
+  (setq mac-command-modifier 'control)
+  (setq mac-control-modifier 'meta))
+
 (setq-default inhibit-splash-screen t
               make-backup-files nil
               tab-width 4
@@ -61,23 +67,24 @@
 
 (require 'evil)
 (evil-mode 1)
+
 (define-key evil-normal-state-map "w" nil)
 (define-key evil-normal-state-map "w" nil)
-(
-define-key evil-normal-state-map "d" nil)
+(define-key evil-normal-state-map "d" nil)
+(define-key evil-normal-state-map "u" nil)
+(define-key evil-normal-state-map "/" nil)
 (define-key evil-visual-state-map (kbd "DEL") 'delete-region)
 (define-key evil-visual-state-map (kbd "<backspace>") 'delete-region)
 
 (define-key evil-motion-state-map "w" nil)
 (define-key evil-motion-state-map "u" nil)
 (define-key evil-motion-state-map "d" nil)
+(define-key evil-motion-state-map "/" nil)
 
 (evil-define-key 'normal 'global
-  "w" 'forward-word
-  "u" 'undo)
+  "w" 'forward-word)
 (evil-define-key 'motion 'global
-  "w" 'forward-word
-  "u" 'undo)
+  "w" 'forward-word)
 
 (evil-mode -1)
 (evil-mode 1)
@@ -162,6 +169,7 @@ define-key evil-normal-state-map "d" nil)
   (define-key evil-visual-state-map (kbd "C-g") #'my/enhanced-keyboard-quit)
   (define-key evil-replace-state-map (kbd "C-g") #'my/enhanced-keyboard-quit)
   (define-key evil-operator-state-map (kbd "C-g") #'my/enhanced-keyboard-quit))
+
 
 (evil-define-key 'normal 'global (kbd "C-e") #'end-of-line)
 (define-key evil-insert-state-map (kbd "C-e") 'end-of-line)
@@ -267,7 +275,7 @@ define-key evil-normal-state-map "d" nil)
 ;; (global-set-key (kbd "M-p") 'move-text-up)
 
 (global-set-key(kbd "C-x P p") 'affe-find)
-(global-set-key(kbd "C-s") 'save-buffer)
+;; (global-set-key(kbd "C-s") 'save-buffer)
 (global-set-key(kbd "C-x k") 'kill-buffer-and-window)
 (global-set-key(kbd "C-x C-x") 'execute-extended-command)
 
@@ -310,9 +318,6 @@ define-key evil-normal-state-map "d" nil)
 (setq display-line-numbers-type 'relative)
 (setq-default display-line-numbers t)
 
-(when (eq system-type 'darwin)
-  (setq mac-command-modifier 'control)
-  (setq mac-control-modifier 'meta))
 
 (use-package evil
   :ensure t)
@@ -359,8 +364,6 @@ define-key evil-normal-state-map "d" nil)
 (setq magit-display-buffer-function 'magit-display-buffer-fullframe-status-v1)
 (setq magit-bury-buffer-function 'magit-restore-window-configuration)
 
-(load "~/.emacs.d/root.el")
-(load "~/.emacs.d/gnu-elpa-keyring/gnu-elpa-keyring-update.el")
 
 (require 'compile)
 compilation-error-regexp-alist-alist
