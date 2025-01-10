@@ -238,10 +238,10 @@
 (define-key evil-emacs-state-map (kbd "C-h") 'backward-char)
 (define-key evil-visual-state-map (kbd "C-h") 'backward-char)
 
-(evil-define-key 'normal 'global (kbd "M-.") 'xref-find-defintions)
-(define-key evil-insert-state-map (kbd "M-.") 'xref-find-defintions)
-(define-key evil-emacs-state-map (kbd "M-.") 'xref-find-defintions)
-(define-key evil-visual-state-map (kbd "M-.") 'xref-find-defintions)
+(evil-define-key 'normal 'global (kbd "M-.") 'xref-find-definitions)
+(define-key evil-insert-state-map (kbd "M-.") 'xref-find-definitions)
+(define-key evil-emacs-state-map (kbd "M-.") 'xref-find-definitions)
+(define-key evil-visual-state-map (kbd "M-.") 'xref-find-definitions)
 
 (evil-define-key 'normal 'global (kbd "M-,") 'xref-go-back)
 (define-key evil-insert-state-map (kbd "M-,") 'xref-go-back)
