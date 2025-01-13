@@ -10,11 +10,7 @@
      default))
  '(evil-collection-unimpaired-mode-hook '(evil-collection-unimpaired-mode-set-explicitly))
  '(global-evil-collection-unimpaired-mode nil)
- '(package-selected-packages
-   '(affe bui company dockerfile-mode evil-collection go-mode
-          gruber-darker-theme lsp-docker lsp-treemacs magit mct
-          mermaid-mode move-text multiple-cursors orderless rustic
-          terraform-mode vertico yaml-mode yasnippet)))
+ '(package-selected-packages nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

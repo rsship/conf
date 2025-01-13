@@ -1,12 +1,12 @@
+(unless (package-installed-p 'crux)
+  (package-refresh-contents)
+  (package-install 'crux))
+
 (setq evil-want-keybinding nil)
-(setq evil-disable-insert-state-bindings t)
 (use-package evil)
 (use-package move-text)
+(setq evil-disable-insert-state-bindings t)
 (setq split-width-threshold nil)
-(tool-bar-mode 0)
-(menu-bar-mode 0)
-(scroll-bar-mode 0)
-(global-display-line-numbers-mode)
 (setq initial-scratch-message "")
 (setq evil-mode-line-format nil)
 (setq evil-insert-state-message nil)
@@ -32,31 +32,38 @@
 (setq ring-bell-function 'ignore)
 (setq-default comment-style 'plain)
 
+(line-number-mode 1)
+(column-number-mode 1)
+(tool-bar-mode 0)
+(menu-bar-mode 0)
+(scroll-bar-mode 0)
+(global-display-line-numbers-mode)
+
 (load "~/.emacs.d/root.el")
 (load "~/.emacs.d/gnu-elpa-keyring/gnu-elpa-keyring-update.el")
 
 (when (eq system-type 'darwin)
-  (setq mac-command-modifier 'control)
-  (setq mac-control-modifier 'meta))
+(setq mac-command-modifier 'control)
+(setq mac-control-modifier 'meta))
 
 (setq-default inhibit-splash-screen t
-              make-backup-files nil
-              tab-width 4
-              indent-tabs-mode nil
-              compilation-scroll-output t)
+            make-backup-files nil
+            tab-width 4
+            indent-tabs-mode nil
+            compilation-scroll-output t)
 
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 
 (setq package-archives
-      '(("melpa" . "https://melpa.org/packages/")
-        ("org " . "https://orgmode.org/elpa/")
-        ("gnu" . "https://elpa.gnu.org/packages/")))
+    '(("melpa" . "https://melpa.org/packages/")
+    ("org " . "https://orgmode.org/elpa/")
+    ("gnu" . "https://elpa.gnu.org/packages/")))
 
 (setq custom-file "~/.emacs.d/custom.el")
 
 (unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
+(package-refresh-contents)
+(package-install 'use-package))
 
 (electric-pair-mode 1)
 (cua-selection-mode 1)
@@ -73,6 +80,7 @@
 (define-key evil-normal-state-map "d" nil)
 (define-key evil-normal-state-map "u" nil)
 (define-key evil-normal-state-map "/" nil)
+(define-key evil-normal-state-map (kbd "C-o") nil)
 (define-key evil-visual-state-map (kbd "DEL") 'delete-region)
 (define-key evil-visual-state-map (kbd "<backspace>") 'delete-region)
 
@@ -82,93 +90,92 @@
 (define-key evil-motion-state-map "/" nil)
 
 (evil-define-key 'normal 'global
-  "w" 'forward-word)
+"w" 'forward-word)
 (evil-define-key 'motion 'global
-  "w" 'forward-word)
+"w" 'forward-word)
 
 (evil-mode -1)
 (evil-mode 1)
 
 (use-package evil-collection
-  :after evil
-  :ensure t
-  :config
-  (evil-collection-init))
+:after evil
+:ensure t
+:config
+(evil-collection-init))
 
 
 (use-package dired
-  :ensure nil
-  :config
+:ensure nil
+:config
 
-  (setq dired-auto-revert-buffer t)
-  (setq auto-revert-verbose nil)
-  (setq global-auto-revert-non-file-buffers t)
-  (global-auto-revert-mode 1)
-  (add-hook 'dired-mode-hook 'auto-revert-mode)
-  
-  (defun my/dired-refresh-after-operation (operation)
-    (when (derived-mode-p 'dired-mode)
-      (revert-buffer)))
-  
-  (advice-add 'dired-do-rename :after #'my/dired-refresh-after-operation)
-  (advice-add 'dired-do-copy :after #'my/dired-refresh-after-operation)
-  (advice-add 'dired-do-delete :after #'my/dired-refresh-after-operation)
-  (advice-add 'dired-create-directory :after #'my/dired-refresh-after-operation))
+(setq dired-auto-revert-buffer t)
+(setq auto-revert-verbose nil)
+(setq global-auto-revert-non-file-buffers t)
+(global-auto-revert-mode 1)
+(add-hook 'dired-mode-hook 'auto-revert-mode)
+
+(defun my/dired-refresh-after-operation (operation)
+(when (derived-mode-p 'dired-mode)
+    (revert-buffer)))
+
+(advice-add 'dired-do-rename :after #'my/dired-refresh-after-operation)
+(advice-add 'dired-do-copy :after #'my/dired-refresh-after-operation)
+(advice-add 'dired-do-delete :after #'my/dired-refresh-after-operation)
+(advice-add 'dired-create-directory :after #'my/dired-refresh-after-operation))
 
 (use-package company
-  :init
-  (add-hook 'after-init-hook 'global-company-mode)
-  :config
-  (setq company-idle-delay 0.2)
-  (setq company-minimum-prefix-length 1) (setq
-  company-tooltip-align-annotations t))
+:init
+(add-hook 'after-init-hook 'global-company-mode)
+:config
+(setq company-idle-delay 0.2)
+(setq company-minimum-prefix-length 1) (setq
+company-tooltip-align-annotations t))
 
 (use-package orderless
-  :ensure t
-  :custom
-  (completion-styles '(orderless basic))
-  (completion--category-override '((file (styles basic partial-completions)))))
+:ensure t
+:custom
+(completion-styles '(orderless basic))
+(completion--category-override '((file (styles basic partial-completions)))))
 
 (use-package yasnippet
-  :init
-  (yas-global-mode 1))
+:init
+(yas-global-mode 1))
 
 (use-package company
-  :config
-  (defun company-backend-with-yas (backend)
-    "Add yasnippet to the company backend."
-    (if (and (listp backend) (member 'company-yasnippet backend))
-        backend
-      (append (if (consp backend) backend (list backend))
-              '(:with company-yasnippet))))
-  (setq company-backends (mapcar #'company-backend-with-yas company-backends)))
+:config
+(defun company-backend-with-yas (backend)
+"Add yasnippet to the company backend."
+(if (and (listp backend) (member 'company-yasnippet backend))
+    backend
+    (append (if (consp backend) backend (list backend))
+            '(:with company-yasnippet))))
+(setq company-backends (mapcar #'company-backend-with-yas company-backends)))
 
 (setq evil-insert-state-cursor '(box "yellow")
-      evil-normal-state-cursor '(box "yellow")
-      evil-emacs-state-cursor  '(box "yellow")
-      evil-motion-state-cursor  '(box "yellow"))
+    evil-normal-state-cursor '(box "yellow")
+    evil-emacs-state-cursor  '(box "yellow")
+    evil-motion-state-cursor  '(box "yellow"))
 
 (custom-set-faces
- '(mc/cursor-face ((t (:inherit cursor)))))
+'(mc/cursor-face ((t (:inherit cursor)))))
 
 (add-hook 'window-setup-hook #'toggle-frame-fullscreen)
 
 (require 'evil)
-
 (defun my/enhanced-keyboard-quit ()
-  (interactive)
-  (when (and (boundp 'evil-mode) 
-             evil-mode
-             (not (minibufferp))) 
-    (evil-normal-state))
-  
-  (keyboard-quit))
+(interactive)
+(when (and (boundp 'evil-mode) 
+            evil-mode
+            (not (minibufferp))) 
+(evil-normal-state))
+
+(keyboard-quit))
 (global-set-key (kbd "C-g") #'my/enhanced-keyboard-quit)
 (with-eval-after-load 'evil
-  (define-key evil-insert-state-map (kbd "C-g") #'my/enhanced-keyboard-quit)
-  (define-key evil-visual-state-map (kbd "C-g") #'my/enhanced-keyboard-quit)
-  (define-key evil-replace-state-map (kbd "C-g") #'my/enhanced-keyboard-quit)
-  (define-key evil-operator-state-map (kbd "C-g") #'my/enhanced-keyboard-quit))
+(define-key evil-insert-state-map (kbd "C-g") #'my/enhanced-keyboard-quit)
+(define-key evil-visual-state-map (kbd "C-g") #'my/enhanced-keyboard-quit)
+(define-key evil-replace-state-map (kbd "C-g") #'my/enhanced-keyboard-quit)
+(define-key evil-operator-state-map (kbd "C-g") #'my/enhanced-keyboard-quit))
 
 
 (evil-define-key 'normal 'global (kbd "C-e") #'end-of-line)
@@ -258,31 +265,39 @@
 (define-key evil-emacs-state-map (kbd "RET") 'newline)
 (define-key evil-visual-state-map (kbd "RET") 'newline)
 
+(evil-define-key 'normal 'global (kbd "C-.") 'pop-to-mark-command)
+(define-key evil-insert-state-map (kbd "C-.") 'pop-to-mark-command)
+(define-key evil-emacs-state-map (kbd "C-.") 'pop-to-mark-command)
+(define-key evil-visual-state-map (kbd "C-.") 'pop-to-mark-command)
+
 (defun toggle-comment-region ()
-  "Toggle comment on region if active, otherwise on cunrent line."
-  (interactive)
-  (if (region-active-p)
-      (let ((start (region-beginning))
-            (end (region-end)))
-        (comment-or-uncomment-region start end))
-    (comment-or-uncomment-region (line-beginning-position) (line-end-position))))
+"Toggle comment on region if active, otherwise on cunrent line."
+(interactive)
+(if (region-active-p)
+    (let ((start (region-beginning))
+        (end (region-end)))
+    (comment-or-uncomment-region start end))
+(comment-or-uncomment-region (line-beginning-position) (line-end-position))))
 
 (global-set-key (kbd "C-x C-/") 'toggle-comment-region)
 
-;; ;;; Move Text
-;; (require 'move-text)
-;; (global-set-key (kbd "M-n") 'move-text-down)
-;; (global-set-key (kbd "M-p") 'move-text-up)
+;;; Move Text
+(require 'move-text)
+(global-set-key (kbd "C-S-c") 'move-text-down)
+(global-set-key (kbd "C-S-x") 'move-text-up)
+(global-set-key (kbd "C-c C-d") 'crux-duplicate-current-line-or-region)
+
+(use-package affe
+:ensure t)
 
 (global-set-key(kbd "C-x P p") 'affe-find)
-;; (global-set-key(kbd "C-s") 'save-buffer)
 (global-set-key(kbd "C-x k") 'kill-buffer-and-window)
 (global-set-key(kbd "C-x C-x") 'execute-extended-command)
 
 (with-eval-after-load 'magit
-  (add-hook 'magit-status-mode-hook
-            (lambda ()
-              (local-set-key (kbd "C-c C-c") 'magit-commit))))
+(add-hook 'magit-status-mode-hook
+        (lambda ()
+            (local-set-key (kbd "C-c C-c") 'magit-commit))))
 
 (global-set-key(kbd "C-1") 'scratch-buffer)
 
@@ -293,13 +308,13 @@
 (define-key evil-emacs-state-map (kbd "C-x C-c") 'project-compile)
 
 (defun toggle-maximize-buffer ()
-  "Maximize buffer if it's not maximized, restore if it is."
-  (interactive) ;; toggle
-  (if (= 1 (length (window-list)))
-      (jump-to-register '_)
-    (progn
-      (window-configuration-to-register '_)
-      (delete-other-windows))))
+"Maximize buffer if it's not maximized, restore if it is."
+(interactive) ;; toggle
+(if (= 1 (length (window-list)))
+    (jump-to-register '_)
+(progn
+    (window-configuration-to-register '_)
+    (delete-other-windows))))
 
 (global-set-key (kbd "C-x 0") 'toggle-maximize-buffer)
 (define-key evil-normal-state-map (kbd ":") 'ignore)
@@ -310,9 +325,9 @@
 (global-set-key (kbd "C-x <") 'ignore )
 
 (use-package vertico
-  :init
-  (vertico-mode)
-  (vertico-flat-mode))
+:init
+(vertico-mode)
+(vertico-flat-mode))
 
 (set-frame-font "Iosevka 17" nil t)
 (setq display-line-numbers-type 'relative)
@@ -320,16 +335,16 @@
 
 
 (use-package evil
-  :ensure t)
+:ensure t)
 
 (use-package multiple-cursors
-  :ensure t
-  :config
-  (setq mc/always-run-for-all t))
+:ensure t
+:config
+(setq mc/always-run-for-all t))
 
 (defun my/mc-temporary-emacs-state ()
-  (when (bound-and-true-p evil-mode)
-    (evil-emacs-state)))
+(when (bound-and-true-p evil-mode)
+(evil-emacs-state)))
 
 (add-hook 'multiple-cursors-mode-enabled-hook 'my/mc-temporary-emacs-state)
 
@@ -342,23 +357,23 @@
 (add-hook 'multiple-cursors-mode-disabled-hook 'evil-normal-state)
 
 (evil-define-key 'visual global-map
-  (kbd "C-n") 'mc/mark-next-like-this
-  (kbd "C-p") 'mc/mark-previous-like-this)
+(kbd "C-n") 'mc/mark-next-like-this
+(kbd "C-p") 'mc/mark-previous-like-this)
 
 (defun my/mc-mark-next-like-this ()
-  (interactive)
-  (when (region-active-p)
-    (mc/mark-next-like-this-symbol 1)))
+(interactive)
+(when (region-active-p)
+(mc/mark-next-like-this-symbol 1)))
 
 (defun my/mc-mark-previous-like-this ()
-  (interactive)
-  (when (region-active-p)
-    (mc/mark-previous-like-this-symbol 1)))
+(interactive)
+(when (region-active-p)
+(mc/mark-previous-like-this-symbol 1)))
 
 (global-set-key (kbd "C-x C-q") 'wdired-change-to-wdired-mode)
 
 (with-eval-after-load 'compile
-  (define-key compilation-mode-map (kbd "C-c C-c") nil))
+(define-key compilation-mode-map (kbd "C-c C-c") 'nil))
 
 
 (setq magit-display-buffer-function 'magit-display-buffer-fullframe-status-v1)
@@ -369,20 +384,21 @@
 compilation-error-regexp-alist-alist
 
 (add-to-list 'compilation-error-regexp-alist
-             '("\\([a-zA-Z0-9\\.]+\\)(\\([0-9]+\\)\\(,\\([0-9]+\\)\\)?) \\(Warning:\\)?"
-               1 2 (4) (5)))
+            '("\\([a-zA-Z0-9\\.]+\\)(\\([0-9]+\\)\\(,\\([0-9]+\\)\\)?) \\(Warning:\\)?"
+            1 2 (4) (5)))
 
 (defun newline-above ()
-  (interactive)
-  (let ((col (current-column)))
-    (beginning-of-line)
-    (open-line 1)
-    (move-to-column col)))
+(interactive)
+(let ((col (current-column)))
+(beginning-of-line)
+(open-line 1)
+(move-to-column col)))
 
 (global-set-key (kbd "C-S-o") 'newline-above)
 (add-hook 'c-mode-hook
-          (lambda ()
-            (setq comment-style 'plain)))
+        (lambda ()
+        (setq comment-style 'plain)))
 
 (load-theme 'gruber-darker t)
 (load-file  custom-file)
+
