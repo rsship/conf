@@ -32,6 +32,8 @@
 (setq ring-bell-function 'ignore)
 (setq-default comment-style 'plain)
 
+(add-hook 'compilation-filter-hook 'ansi-color-compilation-filter)
+
 (line-number-mode 1)
 (column-number-mode 1)
 (tool-bar-mode 0)
@@ -291,7 +293,8 @@ company-tooltip-align-annotations t))
 :ensure t)
 
 (global-set-key(kbd "C-x P p") 'affe-find)
-(global-set-key(kbd "C-x k") 'kill-buffer-and-window)
+(global-set-key(kbd "C-x i") 'delete-window)
+(global-set-key(kbd "C-x k") 'kill-current-buffer)
 (global-set-key(kbd "C-x C-x") 'execute-extended-command)
 
 (with-eval-after-load 'magit
@@ -394,7 +397,15 @@ compilation-error-regexp-alist-alist
 (open-line 1)
 (move-to-column col)))
 
+(defun newline-below ()
+(interactive)
+(let ((col (current-column)))
+(end-of-line)
+(open-line 1)
+(move-to-column col)))
+
 (global-set-key (kbd "C-S-o") 'newline-above)
+(global-set-key (kbd "C-S-l") 'newline-below)
 (add-hook 'c-mode-hook
         (lambda ()
         (setq comment-style 'plain)))
