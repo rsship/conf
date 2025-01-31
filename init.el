@@ -2,6 +2,18 @@
   (package-refresh-contents)
   (package-install 'crux))
 
+(global-unset-key (kbd "C-x C-c"))
+(global-set-key (kbd "C-x C-c") 'compile)
+
+(add-hook 'c-mode-hook
+          (lambda ()
+            (local-unset-key (kbd "C-c C-c"))))
+(setq isearch-search-fun-function 'isearch-search-fun-default)
+
+(setq delete-selection-mode t)  
+(setq kill-do-not-save-duplicates t)  
+(setq save-interprogram-paste-before-kill nil)  
+
 (setq evil-want-keybinding nil)
 (use-package evil)
 (use-package move-text)
@@ -115,6 +127,12 @@
 (setq global-auto-revert-non-file-buffers t)
 (global-auto-revert-mode 1)
 (add-hook 'dired-mode-hook 'auto-revert-mode)
+
+(require 'dired-x)
+(setq dired-omit-files (concat dired-omit-files "\\|\\..+$"))
+(setq-default dired-dwim-target t)
+(setq dired-listing-switches "-alh")
+(setq dired-mouse-drag-files t)
 
 (defun my/dired-refresh-after-operation (operation)
 (when (derived-mode-p 'dired-mode)
@@ -232,11 +250,6 @@ company-tooltip-align-annotations t))
 (define-key evil-emacs-state-map (kbd "C-v") 'set-mark-command)
 (define-key evil-visual-state-map (kbd "C-v") 'set-mark-command)
 
-(evil-define-key 'normal 'global (kbd "C-c C-c") 'compile)
-(define-key evil-insert-state-map (kbd "C-c C-c") 'compile)
-(define-key evil-emacs-state-map (kbd "C-c C-c") 'compile)
-(define-key evil-visual-state-map (kbd "C-c C-c") 'compile)
-
 (evil-define-key 'normal 'global (kbd "C-l") 'forward-char)
 (define-key evil-insert-state-map (kbd "C-l") 'forward-char)
 (define-key evil-emacs-state-map (kbd "C-l") 'forward-char)
@@ -304,12 +317,6 @@ company-tooltip-align-annotations t))
 
 (global-set-key(kbd "C-1") 'scratch-buffer)
 
-(global-unset-key (kbd "C-x C-c"))
-
-(define-key evil-normal-state-map (kbd "C-c C-c") 'compile)
-(define-key evil-normal-state-map (kbd "C-x C-c") 'project-compile)
-(define-key evil-emacs-state-map (kbd "C-x C-c") 'project-compile)
-
 (defun toggle-maximize-buffer ()
 "Maximize buffer if it's not maximized, restore if it is."
 (interactive) ;; toggle
@@ -375,10 +382,6 @@ company-tooltip-align-annotations t))
 
 (global-set-key (kbd "C-x C-q") 'wdired-change-to-wdired-mode)
 
-(with-eval-after-load 'compile
-(define-key compilation-mode-map (kbd "C-c C-c") 'nil))
-
-
 (setq magit-display-buffer-function 'magit-display-buffer-fullframe-status-v1)
 (setq magit-bury-buffer-function 'magit-restore-window-configuration)
 
@@ -412,4 +415,5 @@ compilation-error-regexp-alist-alist
 
 (load-theme 'gruber-darker t)
 (load-file  custom-file)
+
 
