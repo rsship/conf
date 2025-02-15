@@ -10,10 +10,10 @@
             (local-unset-key (kbd "C-c C-c"))))
 (setq isearch-search-fun-function 'isearch-search-fun-default)
 
-(setq delete-selection-mode t)  
+(delete-selection-mode 1)
+(setq delete-active-region t)
 (setq kill-do-not-save-duplicates t)  
-(setq save-interprogram-paste-before-kill nil)  
-
+(setq save-interprogram-paste-before-kill nil)
 (setq evil-want-keybinding nil)
 (use-package evil)
 (use-package move-text)
@@ -102,6 +102,8 @@
 (define-key evil-motion-state-map "u" nil)
 (define-key evil-motion-state-map "d" nil)
 (define-key evil-motion-state-map "/" nil)
+
+(define-key evil-normal-state-map (kbd "SPC") 'evil-insert-state)
 
 (evil-define-key 'normal 'global
 "w" 'forward-word)
