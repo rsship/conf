@@ -1,0 +1,2 @@
+;;   -*- mode: lisp-data; -*-
+((:container ((elisp org-element--headline-cache) (elisp org-element--cache) (version "2.3")) :persist-file "4a/fe8f6c-49c7-4e3e-ae00-c6cbc76cb5f9" :associated (:hash "912c89752faf26ac863f59b100cdf19e" :file "/Users/salihbozkaya/Documents/random_art/NOTES.org" :inode 111840495) :expiry 30) (:container ((index "3.2")) :persist-file "93/d42573-44f3-44b6-b105-606814854215" :associated nil :expiry never :last-access 1743512363.3712 :last-access-hr "2025-04-01T15:59:23+0300"))
