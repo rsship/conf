@@ -5,6 +5,7 @@
 (menu-bar-mode 0)
 (scroll-bar-mode 0)
 (global-display-line-numbers-mode)
+(setq dired-dwim-target t)
 
 (setq lsp-diagnostics-provider :none)
 (setq split-width-threshold nil)
@@ -23,6 +24,7 @@
              tab-width 4
              indent-tabs-mode nil
              compilation-scroll-output t)
+
 
 (setq custom-file "~/.emacs.d/custom.el")
 (load "~/.emacs.d/.emacs.local/simpc-mode.el")
@@ -101,11 +103,26 @@
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this) 
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this) 
 (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+(global-set-key (kbd "C-1") 'scratch-buffer)
 
 
 (global-set-key (kbd "C-:") 'goto-line)
 (global-set-key (kbd "C-x C-c") 'compile)
 (global-set-key (kbd "C-x k") 'kill-current-buffer)
+(global-set-key (kbd "C-+") 'indent-region)
+(global-set-key (kbd "C-w") 'kill-ring-save)
+(global-set-key (kbd "C-q") 'kill-region)
+
+(defun rc/toggle-maximize-buffer () "Maximize buffer"
+  (interactive)
+  (if (= 1 (length (window-list)))
+      (jump-to-register '_) 
+    (progn
+      (window-configuration-to-register '_)
+      (delete-other-windows))))
+
+(global-set-key (kbd "C-x 0") 'rc/toggle-maximize-buffer)
+(global-unset-key (kbd "C-x C-d"))
 
 
 (defun rc/duplicate-line ()
@@ -122,15 +139,6 @@
 
 (global-set-key (kbd "C-,") 'rc/duplicate-line)
 
-(defun rc/put-file-name-on-clipboard ()
-  "Put the current file name on the clipboard"
-  (interactive)
-  (let ((filename (rc/buffer-file-name)))
-    (when filename
-      (kill-new filename)
-      (message filename))))
-
-
 (defun rc/kill-autoloads-buffers ()
   (interactive)
   (dolist (buffer (buffer-list))
@@ -140,4 +148,4 @@
         (message "Killed autoloads buffer %s" name)))))
 
 (require 'simpc-mode)
-(add-to-list 'auto-mode-alist '("\\.[hc]\\(pp\\)?\\'" . simpc-mode))
+(add-to-list 'auto-mode-alist '("\\.[hc|mm]\\(pp\\)?\\'" . simpc-mode))
